@@ -4,7 +4,7 @@ from api.views import CreateUserView, UserProfileView, UserDetailView, AllUsersV
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from api.profile_views import ProfileDetail
 from api.writer_request_views import WriterRequestCreateView, WriterRequestListView, AdminWriterRequestUpdateView
-from api.article_views import ArticleListView, ArticleCreateView, WritersArticles
+from api.article_views import ArticleListView, ArticleCreateView, WritersArticles, ArticleAndParagraphsUpdateView, ParagraphDeleteView, ArticleDeleteView, WritersSingleArticle
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -23,10 +23,17 @@ urlpatterns = [
     path("api/writer-requests/list/", WriterRequestListView.as_view(), name="list-writer-requests"),
     path("api/admin/writer-requests/<int:pk>/", AdminWriterRequestUpdateView.as_view(), name="admin-update-writer-request"),
     
-    
+    # Article and paragraph routes
     path("api/articles/list/", ArticleListView.as_view(), name="article-list-view"),
     path('api/create-article/', ArticleCreateView.as_view(), name='article-create'), 
     path("api/my-articles/<str:username>/",WritersArticles.as_view(), name="writers-articles" ),
+    
+    path("api/article-and-paragraphs-update/<int:article_id>/", ArticleAndParagraphsUpdateView.as_view(), name="paragraph-create" ),
+
+
+    path("api/articles/<int:article_id>/paragraphs/<int:paragraph_id>/delete/", ParagraphDeleteView.as_view(), name="paragraph-delete"),
+    path("api/articles/<int:article_id>/delete/", ArticleDeleteView.as_view(), name="article-delete"),
+    path("api/articles/<int:article_id>/", WritersSingleArticle.as_view(), name="article-detail"),
     
     # path("api/active-writer-list/", ActiveWriterListView.as_view(), name="active-writer-list"),
     

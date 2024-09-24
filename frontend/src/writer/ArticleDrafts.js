@@ -1,14 +1,21 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import { UserContext } from '../context/User';
 import DraftsIcon from '@mui/icons-material/Drafts';
+import { WriterContext } from '../context/Writer';
+import { useNavigate, useParams, Outlet  } from "react-router-dom";
+
+
 
 // MUI IMPORTS
 import Card from "@mui/material/Card";
-import { Button, Typography } from "@mui/material";
+import { Button, Typography, Box } from "@mui/material";
 import CreateIcon from "@mui/icons-material/Create";
 
-function ArticleDrafts({ articles, setArticles, setArticleType }) {
+function ArticleDrafts() {
     const { isMobile } = useContext(UserContext);
+    const {articles, setArticleType} = useContext(WriterContext)
+    const navigate = useNavigate()
+    const { articleType } = useParams()
 
 
     const cardStyle = {
@@ -33,11 +40,11 @@ function ArticleDrafts({ articles, setArticles, setArticleType }) {
     };
 
     useEffect(() => {
-        setArticleType("draft");
-        return () => {
-            setArticleType(null);
-        };
-    }, []);
+        setArticleType(articleType);
+        // return () => {
+        //     setArticleType(null);
+        // };
+    }, [articleType]);
 
     const gridContainerStyle = {
         display: "grid",
@@ -62,6 +69,7 @@ function ArticleDrafts({ articles, setArticles, setArticleType }) {
         return date.toLocaleString('en-US', options);
       }
 
+
     return (
         <div style={{ textAlign: "center" }}>
             <DraftsIcon fontSize="large" style={{ marginBottom: "15px" }} />
@@ -82,6 +90,7 @@ function ArticleDrafts({ articles, setArticles, setArticleType }) {
                         onMouseOut={(e) =>
                             (e.currentTarget.style.transform = "scale(1)")
                         }
+                        onClick={() => navigate(`./${article?.id}`)}
                     >
                         <Typography variant="h6">
                         {article.title.length > 40 
@@ -97,17 +106,20 @@ function ArticleDrafts({ articles, setArticles, setArticleType }) {
                                 objectFit: "contain",
                                 display: "block",
                                 margin: "auto",
-                              }}
+                                }}
                         />
                         <p style={{fontSize: "10px"}}>{formatDate(article?.created_at)}</p>
-                        <Button sx={{marginTop: "10px"}}>
+                        <Button sx={{marginTop: "10px"}} >
                             <CreateIcon sx={{color: "black"}} fontSize='medium'/>
                         </Button>
                     </Card>
                 ))}
             </div>
+            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        {/* <Toolbar /> */}
+        <Outlet />
+        </Box>
         </div>
     );
 }
-
 export default ArticleDrafts;

@@ -18,8 +18,7 @@ export const UserProvider = ({ children }) => {
     const isMobile = useMediaQuery("(max-width:600px)");
     const navigate= useNavigate()
 
-console.log(allUsers, "all users")
-console.log(user)
+
 
     useEffect(() => {
         const checkAuth = async () => {

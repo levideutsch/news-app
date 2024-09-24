@@ -88,7 +88,7 @@ class AllUsersView(APIView):
                     user.profile.is_writer 
                     if hasattr(user, 'profile') and user.profile else None
                 ),
-                "articles": [article for article in user.articles.all()]
+                # "articles": [article for article in user.articles.all()]
             }
             users_data.append(user_data)
         

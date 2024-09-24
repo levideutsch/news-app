@@ -1,10 +1,10 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { UserContext } from "../context/User";
-import { useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN } from "../util/constants";
+
 // MUI IMPORTS
 import Card from "@mui/material/Card";
-import { Typography, TextField, Button, Input, IconButton } from "@mui/material";
+import { Typography, TextField, Button, IconButton } from "@mui/material";
 import NewspaperIcon from "@mui/icons-material/Newspaper";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import AddIcon from '@mui/icons-material/Add';
@@ -15,36 +15,17 @@ import PreviewAndPublish from "./PreviewAndPublish";
 
 function CreateArticle() {
   const { isMobile } = useContext(UserContext);
-  const navigate = useNavigate();
   const [articleFormData, setArticleFormData] = useState({
     title: "",
     photo_header: null,
     is_a_draft: true,
-    paragraphs: [{ body: "", photo: "", order: 1 }],
+    paragraphs: [{ body: "", photo: ""}],
   });
-  console.log(articleFormData)
+
   const [photoHeaderPreview, setPhotoHeaderPreview] = useState(null);
   const [paragraphPreviews, setParagraphPreviews] = useState({});
   const [previewAndPublishClicked, setPreviewAndPublishClicked] = useState(false)
-  const formDataRef = useRef(articleFormData);
-
-useEffect(() => {
-  // Keep formDataRef in sync with articleFormData
-  formDataRef.current = articleFormData;
-}, [articleFormData]);
-
-// useEffect(() => {
-//   return () => {
-//     // This will run when the component unmounts
-//     if (formDataRef.current?.title?.length > 1) {
-//       postArticleData(formDataRef.current, false); // Save as draft when unmounting
-//       console.log("Article data saved as draft");
-//     } else {
-//       console.log("Article data not saved");
-//     }
-//   };
-// }, []);
-
+console.log(articleFormData, "article form data")
 
   const cardStyle = {
     width: isMobile ? "100%" : "30%",
@@ -125,7 +106,6 @@ useEffect(() => {
         {
           body: "",
           photo: null,
-          order: prevData.paragraphs.length + 1,
         },
       ],
     }));
@@ -136,15 +116,15 @@ useEffect(() => {
       // Remove the paragraph at the specified index
       const updatedParagraphs = prevData.paragraphs.filter((_, i) => i !== index);
   
-      // Update the order of the remaining paragraphs
-      const reorderedParagraphs = updatedParagraphs.map((paragraph, idx) => ({
-        ...paragraph,
-        order: idx + 1, // Reorder starting from 1
-      }));
-  
+      // // Update the order of the remaining paragraphs
+      // const reorderedParagraphs = updatedParagraphs.map((paragraph, idx) => ({
+      //   ...paragraph,
+      //   order: idx + 1, // Reorder starting from 1
+      // }));
+
       return {
         ...prevData,
-        paragraphs: reorderedParagraphs,
+        paragraphs: updatedParagraphs,
       };
     });
   
@@ -173,22 +153,17 @@ useEffect(() => {
       const formData = new FormData();
       formData.append("title", articleData.title);
       formData.append("photo_header", articleData.photo_header);
-  
       formData.append("is_a_draft", isPublishing ? "false" : "true");
   
       // Add paragraphs to the FormData
       articleData.paragraphs.forEach((paragraph, index) => {
         formData.append(`paragraphs[${index}].body`, paragraph.body);
         formData.append(`paragraphs[${index}].photo`, paragraph.photo);
-        formData.append(`paragraphs[${index}].order`, paragraph.order);
       });
 
-    console.log(formData, "form data from post")
-  
       const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
-          // "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`, // Adjust token retrieval as needed
         },
         body: formData,
@@ -200,10 +175,8 @@ useEffect(() => {
   
       const data = await response.json();
       console.log("Article created successfully:", data);
-      // Handle success (e.g., navigate to another page or show a success message)
     } catch (error) {
       console.error("Error creating article:", error);
-      // Handle error (e.g., show an error message)
     }
   };
 
@@ -212,13 +185,10 @@ useEffect(() => {
     postArticleData(articleFormData, true); // isPublishing is true for publishing
   };
 
-
   // Save as Draft button
   const handleSaveAsDraft = () => {
     postArticleData(articleFormData, false); // isPublishing is false for saving as draft
   };
-
-  
 
   return (
     <div style={{ textAlign: "center" }}>

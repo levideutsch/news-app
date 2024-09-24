@@ -55,13 +55,14 @@ class ArticleParagraph(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='paragraphs')
     body = models.TextField()
     photo = models.ImageField(upload_to='article_photos/', null=True, blank=True)
-    order = models.PositiveIntegerField()
+  
     
     class Meta:
-        ordering = ['order']
-        
+        # Remove the ordering line
+        pass
+
     def __str__(self):
-        return f"Paragraph {self.order} for {self.article.title}"     
+        return f"Paragraph for {self.article.title}" 
     
     
     

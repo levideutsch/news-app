@@ -43,16 +43,23 @@ class WriterRequestSerializer(serializers.ModelSerializer):
 
 
 class ArticleParagraphSerializer(serializers.ModelSerializer):
+    photo = serializers.SerializerMethodField(allow_null=True)
     class Meta:
         model = ArticleParagraph
-        fields = [
-            "body", 
-            "photo",
-            "order"
-        ]
+        fields = [ "id", "body", "photo", "article" ]
+        
+    def get_photo(self, obj):
+        request = self.context.get("request")
+        if obj.photo and hasattr(obj.photo, "url"):
+            return request.build_absolute_uri(obj.photo.url)
+        return None
+    
+
 
 class ArticleSerializer(serializers.ModelSerializer):
-    paragraphs = ArticleParagraphSerializer(many=True, read_only=False)
+    paragraphs = ArticleParagraphSerializer(many=True)
+    photo_header = serializers.SerializerMethodField()  # Add this line for the photo_header URL
+
 
     class Meta:
         model = Article
@@ -61,16 +68,22 @@ class ArticleSerializer(serializers.ModelSerializer):
             'is_a_draft', 'created_at',
             'updated_at', 'paragraphs'
         ]
+    
+    def get_photo_header(self, obj):
+        request = self.context.get('request')
+        if obj.photo_header and hasattr(obj.photo_header, 'url'):
+            return request.build_absolute_uri(obj.photo_header.url)
+        return None    
         
-    def create(self, validated_data):
-        paragraphs_data = validated_data.pop('paragraphs')
-        article = Article.objects.create(**validated_data)
+    # def create(self, validated_data):
+    #     paragraphs_data = validated_data.pop('paragraphs')
+    #     article = Article.objects.create(**validated_data)
         
-        # Create paragraphs linked to the article
-        for paragraph_data in paragraphs_data:
-            ArticleParagraph.objects.create(article=article, **paragraph_data)
+    #     # Create paragraphs linked to the article
+    #     for paragraph_data in paragraphs_data:
+    #         ArticleParagraph.objects.create(article=article, **paragraph_data)
         
-        return article
+    #     return article
 
 
 class UserSerializer(serializers.ModelSerializer):
