@@ -152,9 +152,6 @@ export const UserProvider = ({ children }) => {
         }
     }, [isAuthorized]); 
 
-
-
-
     const login = async (username, password) => {
         const apiUrl = "http://127.0.0.1:8000"; // Base URL of the API
         const endpoint = '/api/token/'; // Endpoint for login
@@ -200,8 +197,6 @@ export const UserProvider = ({ children }) => {
     };
     
     
-
-
     // const register = async (username, password) => {
     //     try {
     //         await api.post('/api/user/register/', { username, password });
@@ -213,10 +208,6 @@ export const UserProvider = ({ children }) => {
     //         console.error('Registration error:', err);
     //     }
     // };
-
-
-
-
 
 
     return (
@@ -232,7 +223,7 @@ export const UserProvider = ({ children }) => {
             user,
             setUser,
             allUsers,
-            setAllUsers
+            setAllUsers,
               }}>
             {children}
         </UserContext.Provider>

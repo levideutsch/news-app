@@ -23,10 +23,33 @@ function Login({ setHasAnAccount, loginOrRegisterIsOpen, setLoginOrRegisterIsOpe
         login(username, password);     
       };
 
+      const textFieldStyles = {
+        "& .MuiOutlinedInput-root": {
+          "& fieldset": {
+            borderColor: "white", // Default border color
+          },
+          "&:hover fieldset": {
+            borderColor: "white", // Border color when hovered
+          },
+          "&.Mui-focused fieldset": {
+            borderColor: "white", // Border color when focused
+          },
+          "& input": {
+            color: "white", // Text color
+          },
+        },
+        "& .MuiInputLabel-root": {
+          color: "white", // Label color
+        },
+        "& .MuiInputLabel-root.Mui-focused": {
+          color: "white", // Label color when focused
+      }
+    }
+
 
     return (
         <Dialog open={loginOrRegisterIsOpen}>
-        <Container maxWidth="xs">
+        <Container maxWidth="xs" sx={{backgroundColor: "#394853"}}>
         <Box
           display="flex"
           flexDirection="column"
@@ -34,7 +57,7 @@ function Login({ setHasAnAccount, loginOrRegisterIsOpen, setLoginOrRegisterIsOpe
           justifyContent="center"
           sx={{ mt: 8 }}
         >
-          <Typography variant="h4" component="h1" gutterBottom>
+          <Typography variant="h4" component="h1" gutterBottom sx={{color: "white"}}>
             Welcome Back!
           </Typography>
           <Box
@@ -43,6 +66,7 @@ function Login({ setHasAnAccount, loginOrRegisterIsOpen, setLoginOrRegisterIsOpe
             sx={{ mt: 1, width: "100%" }}
           >
             <TextField
+              sx={textFieldStyles}
               variant="outlined"
               margin="normal"
               required
@@ -56,6 +80,7 @@ function Login({ setHasAnAccount, loginOrRegisterIsOpen, setLoginOrRegisterIsOpe
               onChange={(e) => setUsername(e.target.value)}
             />
             <TextField
+              sx={textFieldStyles}
               variant="outlined"
               margin="normal"
               required
@@ -75,20 +100,20 @@ function Login({ setHasAnAccount, loginOrRegisterIsOpen, setLoginOrRegisterIsOpe
               type="submit"
               fullWidth
               variant="contained"
-              color="primary"
-              sx={{ mt: 3, mb: 2 }}
+              // color="primary"
+              sx={{ mt: 3, mb: 2, backgroundColor: "white", color: "black" }}
             >
               Login
             </Button>
           </Box>
 
-          <Typography>Do not have an account?</Typography>
+          <Typography sx={{color: "white"}}>Do not have an account?</Typography>
         
           <Button onClick={() => setHasAnAccount(false)}>
-          <Typography>Register here</Typography>
+          <Typography sx={{color: "white"}}>Register here</Typography>
         </Button>
         <Button onClick={() => setLoginOrRegisterIsOpen(false)}>
-        <ArrowBackIosIcon />
+        <ArrowBackIosIcon  sx={{color: "white"}}/>
         </Button>
         
   

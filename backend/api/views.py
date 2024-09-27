@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from .models import Profile
-from rest_framework import generics, status
+from .models import Profile, Article
+from rest_framework import generics, status, serializers
 from .serializers import UserSerializer, ProfileSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.http import JsonResponse, Http404
@@ -34,6 +34,19 @@ class UserDetailView(APIView):
             user = User.objects.get(username=username)
         except User.DoesNotExist:
             raise Http404("User does not exist")
+        
+                # Manually serialize each article to a dictionary
+        articles_data = [
+            {
+                "id": article.id,
+                "title": article.title,
+                "created_at": article.created_at,
+                "updated_at": article.updated_at,
+                "photo_header": request.build_absolute_uri(article.photo_header.url) if article.photo_header else None,
+            }
+            for article in user.articles.all()
+        ]
+
 
         user_data = {
             "id": user.id,
@@ -61,7 +74,7 @@ class UserDetailView(APIView):
             'linkedin_link': (
                 user.profile.linkedin_link if hasattr(user, "profile") and user.profile and hasattr(user.profile, "linkedin_link") else None
             ),
-            "articles": [article for article in user.articles.all()] 
+            "articles": articles_data 
         }
         
         return JsonResponse(user_data)

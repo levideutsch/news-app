@@ -11,6 +11,8 @@ from .permissions import IsWriter
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.http import JsonResponse, Http404
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.utils.timezone import now, timedelta
+from .services.article_service import ArticleService
 # pdb.set_trace()
 import json
 
@@ -29,7 +31,7 @@ class ArticleCreateView(APIView):
     permission_classes = [IsAuthenticated, IsWriter]
 
     def post(self, request, *args, **kwargs):
-        pdb.set_trace()
+        # pdb.set_trace()
         # Convert is_a_draft from string to boolean
         is_a_draft = request.data.get('is_a_draft', 'false').lower() == 'true'
         
@@ -182,11 +184,7 @@ class ArticleAndParagraphsUpdateView(APIView):
         } for p in updated_paragraphs]
 
         return Response({'article': updated_article_data, 'paragraphs': paragraphs_data}, status=status.HTTP_200_OK)
-        
-
-
-
-       
+           
 # GET Single writers articles
 class WritersArticles(APIView):
     permission_classes = [AllowAny]
@@ -220,7 +218,7 @@ class WritersArticles(APIView):
 class WritersSingleArticle(APIView):
     permission_classes = [AllowAny]
     def get(self, request, article_id, *args, **kwargs):
-        pdb.set_trace()
+        # pdb.set_trace()
         try:
             # Retrieve the article by ID
             article = Article.objects.get(id=article_id)
@@ -254,3 +252,69 @@ class ArticleDeleteView(APIView):
             return Response({"message": 'Article and associated paragraphs deleted successfully'})             
         except Article.DoesNotExist:
             return Response({"error": "Article not found"}, status=status.HTTP_404_NOT_FOUND)
+
+class HomePageArticles(APIView):
+    permission_classes = [AllowAny]
+    
+    def get(self, request, *args, **kwargs):
+        try:
+            articles = ArticleService.get_articles(request)
+            response_data = ArticleService.get_response_data(articles, request)
+            
+            return Response(response_data, status=200)
+        except Article.DoesNotExist:
+            return Response({"error": "No articles found"}, status=404)
+        
+        
+class UserSingleArticleView(APIView):
+    permission_classes = [AllowAny]
+    
+    def get(self, request, article_id, *args, **kwargs):
+        # pdb.set_trace()
+        try:
+            # Retrieve the article by ID
+            article = Article.objects.get(id=article_id)
+            
+            # Serialize the article data
+            serializer = ArticleSerializer(article, context={'request': request})
+            
+            # Return the serialized data in the response
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Article.DoesNotExist:
+            return Response({'error': 'Article not found'}, status=status.HTTP_404_NOT_FOUND)      
+        
+        
+# Articles for Home page
+# class HomePageArticles(APIView):
+#     permission_classes = [AllowAny]
+    
+#     def get(self, request, *args, **kwargs):
+#         try:
+#             time_threshold = now() - timedelta(hours=200)
+#             # Find published articles created in the last 48 hours
+#             articles_from_past_day = Article.objects.filter(
+#                 is_a_draft=False,
+#                 created_at__gte=time_threshold
+#             ).order_by("-created_at")
+            
+            
+            
+#             latest_article = articles_from_past_day.first()
+#             # Check if latest_article exists before serialization
+#             if latest_article:
+#                 latest_serializer = ArticleSerializer(latest_article, context={'request': request})
+#             else:
+#                 latest_serializer = None  # or handle the case when no articles exist
+                
+#             articles_from_past_day_response = articles_from_past_day.exclude(id=latest_article.id)    
+#             serializer = ArticleSerializer(articles_from_past_day_response, context={'request': request},  many=True)
+            
+#             return Response({"past_day": serializer.data, "latest": latest_serializer.data, "number": articles_from_past_day_response.count() }, status=200)
+#         except Article.DoesNotExist:
+#             return Response({"error": "No articles found"}, status=404)
+            
+            # maximum amount of articles in array should be 20
+            # if the amount is not 20, it should go to over a day ago and fill the array up to 20
+            # go as many days as possible until 20 is filled
+            # if there are not 20 altogether, then just send as many as there are
+            # newest article of the 10 should be seperated and sent as "newest"

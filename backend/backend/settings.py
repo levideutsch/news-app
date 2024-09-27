@@ -3,6 +3,18 @@ from datetime import timedelta
 from dotenv import load_dotenv
 import os
 
+# env 
+from decouple import config
+
+EMAIL_BACKEND = config('EMAIL_BACKEND')
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT', cast=int)  # Ensure it's an integer
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)  # Ensure it's a boolean
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
+FRONTEND_URL = config('FRONTEND_URL')
+
 load_dotenv() # Loads env file for credetials for db 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent

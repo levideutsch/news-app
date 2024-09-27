@@ -19,6 +19,7 @@ import { Card, Tooltip  } from '@mui/material';
 
 function PublicProfile() {
   const { username } = useParams();
+  const [errorFetchingUser, setErrorFetchingUser] = useState(null)
   const [currentPublicProfile, setCurrentPublicProfile] = useState(null);
   const [value, setValue] = React.useState(0);
   const { isMobile } = useContext(UserContext)
@@ -66,10 +67,12 @@ function PublicProfile() {
           },
         });
         if (!response.ok) {
-          console.log(response);
+          console.log(response, "error");
+          setErrorFetchingUser(true)
         } else {
           const data = await response.json();
           setCurrentPublicProfile(data);
+          setErrorFetchingUser(false)
         }
       } catch (error) {
         console.log("Failed to fetch writer requests");
@@ -79,80 +82,86 @@ function PublicProfile() {
     fetchRequests();
   }, [username]);
 
-  return (
-    <div style={{ textAlign: "center" }}>
-      <Card sx={cardStyle}>
-        <h1>{currentPublicProfile?.username}'s Profile 
-        {currentPublicProfile?.is_writer && <Tooltip title="User Is A Writer" arrow><VerifiedIcon /></Tooltip> }
-        </h1>     
-        <Avatar
-          alt="Remy Sharp"
-          src={
-            currentPublicProfile?.profile_photo
-              ? currentPublicProfile?.profile_photo
-              : "https://www.shutterstock.com/image-vector/vector-design-avatar-dummy-sign-600nw-1290556063.jpg"
-          }
-          sx={{
-            width: 200,
-            height: 200,
-            mx: "auto",
-            mb: 2,
-            boxShadow: 20,
-            marginTop: "10px",
-          }}
-        />
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          centered
-     
-            style={{
-                // marginTop: "-10px", // Adjust margin for better visibility
-                backgroundColor: "white",
-                width: "100%",
-                position: "relative", 
-                zIndex: 1, 
-                margin: "0 auto",
-                // boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Add a shadow for better distinction
-                borderRadius: "8px",
-                marginTop: "20px"
-                
-        
-          }}
-        >
-            {currentPublicProfile?.is_writer &&
-            <Tab label="Articles" style={{color: "#394853"}}/>
-            }
-          <Tab label="About" style={{color: "#394853"}}/>
-          <Tab label="Connect" style={{color: "#394853"}}/>
-        </Tabs>
-
+  {
+    if (!errorFetchingUser) {
+      return (
+        <div style={{ textAlign: "center" }}>
+          <Card sx={cardStyle}>
+            <h1>{currentPublicProfile?.username}'s Profile 
+            {currentPublicProfile?.is_writer && <Tooltip title="User Is A Writer" arrow><VerifiedIcon /></Tooltip> }
+            </h1>     
+            <Avatar
+              alt="Remy Sharp"
+              src={
+                currentPublicProfile?.profile_photo
+                  ? currentPublicProfile?.profile_photo
+                  : "https://www.shutterstock.com/image-vector/vector-design-avatar-dummy-sign-600nw-1290556063.jpg"
+              }
+              sx={{
+                width: 200,
+                height: 200,
+                mx: "auto",
+                mb: 2,
+                boxShadow: 20,
+                marginTop: "10px",
+              }}
+            />
+            <Tabs
+              value={value}
+              onChange={handleChange}
+              centered
          
-      </Card>
-      {/* <Tabs
-          value={value}
-          onChange={handleChange}
-          centered
-          style={{
-            marginTop: "-35px",
-            backgroundColor: "white",
-            width: "95%",
-            // height: "20vh",
-            position: "relative", // Make sure Tabs has a relative position
-            zIndex: 1, // Set a higher z-index value
-            margin: "0 auto",
-            // boxShadow: 20,
-            borderRadius: "8px",
-          }}
-        >
-            {currentPublicProfile?.is_writer &&
-            <Tab label="Articles" style={{color: "#394853"}}/>
-            }
-          <Tab label="About" style={{color: "#394853"}}/>
-          <Tab label="Connect" style={{color: "#394853"}}/>
-        </Tabs> */}
-        {displayCard()}
-    </div>
-  );
+                style={{
+                    // marginTop: "-10px", // Adjust margin for better visibility
+                    backgroundColor: "white",
+                    width: "100%",
+                    position: "relative", 
+                    zIndex: 1, 
+                    margin: "0 auto",
+                    // boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Add a shadow for better distinction
+                    borderRadius: "8px",
+                    marginTop: "20px"
+                    
+            
+              }}
+            >
+                {currentPublicProfile?.is_writer &&
+                <Tab label="Articles" style={{color: "#394853"}}/>
+                }
+              <Tab label="About" style={{color: "#394853"}}/>
+              <Tab label="Connect" style={{color: "#394853"}}/>
+            </Tabs>
+    
+             
+          </Card>
+          {/* <Tabs
+              value={value}
+              onChange={handleChange}
+              centered
+              style={{
+                marginTop: "-35px",
+                backgroundColor: "white",
+                width: "95%",
+                // height: "20vh",
+                position: "relative", // Make sure Tabs has a relative position
+                zIndex: 1, // Set a higher z-index value
+                margin: "0 auto",
+                // boxShadow: 20,
+                borderRadius: "8px",
+              }}
+            >
+                {currentPublicProfile?.is_writer &&
+                <Tab label="Articles" style={{color: "#394853"}}/>
+                }
+              <Tab label="About" style={{color: "#394853"}}/>
+              <Tab label="Connect" style={{color: "#394853"}}/>
+            </Tabs> */}
+            {displayCard()}
+        </div>
+      );
+    } else {
+      return <h1 style={{textAlign: "center", color: "white"}}>User Does Not Exist</h1>
+    }
+  }
 }
 export default PublicProfile;

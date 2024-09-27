@@ -285,7 +285,7 @@ function EditMySingleArticle({ article, setIsEditing, setArticle }) {
             // Add article data to formdata
             articleParagraphsFormData.append("title", articleData.title);
             articleParagraphsFormData.append("photo_header", articleData.photo_header);
-            articleParagraphsFormData.append("is_a_draft", articleData.is_a_draft);
+            articleParagraphsFormData.append("is_a_draft", isPublishing ? "false" : "true");
 
             // Initialize existing and new paragraphs 
             const existingParagraphs = [];
@@ -339,6 +339,7 @@ function EditMySingleArticle({ article, setIsEditing, setArticle }) {
         const result = await response.json();
         if (response.ok) {
             console.log('Update successful:', result);
+            navigate(`/writer/articles/${result?.article?.is_a_draft ? "draft" : "published"}`)
         } else {
             console.error('Update failed:', result);
         }
@@ -523,19 +524,19 @@ function EditMySingleArticle({ article, setIsEditing, setArticle }) {
         <AddIcon sx={{color: "black"}} fontSize="large"/>
         </Button>
         <br />
-
+      <p>{article?.is_a_draft ? "This article is currently a draft" : "This Article is currently published"}</p>
     <div style={{justifyContent: "center", display: "flex", alignItems: "center", gap: "20px", marginBottom: "30px", marginTop: "30px"}}>
         <Button
           sx={{color: "white", backgroundColor: "#394853", minWidth: "15vw"}}
           onClick={handlePublish}
         >
-          Preview And Publish
+          {article?.is_a_draft ? "Preview And Publish" : "Continue As Published"}
         </Button>
         <Button
           sx={{color: "white", backgroundColor: "#394853", minWidth: "15vw"}}
           onClick={handleSaveAsDraft}
         >
-          Continue As Saved Draft
+          {article?.is_a_draft ? "Continue As Saved Draft" : "Move From Published To Draft"}
         </Button>
       </div>
       </form>

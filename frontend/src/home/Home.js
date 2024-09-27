@@ -5,6 +5,7 @@ import { UserContext } from "../context/User";
 
 // COMPONENT IMPORTS
 import FloatingNav from "./FloatingNav";
+import TodaysArticles from "./TodaysArticles";
 
 function Home() {
     const [hasAnAccount, setHasAnAccount] = useState(true)
@@ -18,8 +19,9 @@ function Home() {
                 setHasAnAccount={setHasAnAccount}
                 />
              }
-             <h1 style={{textAlign: "center", color: "white"}}>Home page</h1>
-             <FloatingNav />
+             <h1 style={{textAlign: "center", color: "white"}}>Latest Articles</h1>
+             <TodaysArticles />
+             {/* <FloatingNav /> */}
         </div>
     )
 }

@@ -1,6 +1,7 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import { UserContext } from "../context/User";
 import { ACCESS_TOKEN } from "../util/constants";
+import { useNavigate } from "react-router-dom";
 
 // MUI IMPORTS
 import Card from "@mui/material/Card";
@@ -25,7 +26,8 @@ function CreateArticle() {
   const [photoHeaderPreview, setPhotoHeaderPreview] = useState(null);
   const [paragraphPreviews, setParagraphPreviews] = useState({});
   const [previewAndPublishClicked, setPreviewAndPublishClicked] = useState(false)
-console.log(articleFormData, "article form data")
+  const navigate = useNavigate()
+
 
   const cardStyle = {
     width: isMobile ? "100%" : "30%",
@@ -172,9 +174,9 @@ console.log(articleFormData, "article form data")
       if (!response.ok) {
         throw new Error("Network response was not ok.");
       }
-  
       const data = await response.json();
       console.log("Article created successfully:", data);
+      navigate(`/writer/articles/${data.is_a_draft ? "draft" : "published"}`)
     } catch (error) {
       console.error("Error creating article:", error);
     }
@@ -310,7 +312,7 @@ console.log(articleFormData, "article form data")
             
           }}
         >
-          <h2>Paragraph {paragraph.order}</h2>
+          <h2>Paragraph</h2>
           <TextField
             variant="outlined"
             margin="normal"
@@ -323,7 +325,7 @@ console.log(articleFormData, "article form data")
             multiline
             minRows={3}
             InputProps={{
-              placeholder: `Enter text for paragraph ${paragraph.order}...`,
+              placeholder: `Enter text for paragraph ${index + 1}...`,
             }}
           />
         <IconButton
@@ -385,6 +387,7 @@ console.log(articleFormData, "article form data")
           Save as Draft
         </Button>
       </div>
+      <button onClick={() => navigate("/writer/articles/published")}>back to writer test</button>
     </div>
   );
 }

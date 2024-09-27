@@ -11,7 +11,7 @@ import Card from "@mui/material/Card";
 import { Button, Typography, Box } from "@mui/material";
 import CreateIcon from "@mui/icons-material/Create";
 
-function ArticleDrafts() {
+function WritersArticles() {
     const { isMobile } = useContext(UserContext);
     const {articles, setArticleType} = useContext(WriterContext)
     const navigate = useNavigate()
@@ -73,7 +73,7 @@ function ArticleDrafts() {
     return (
         <div style={{ textAlign: "center" }}>
             <DraftsIcon fontSize="large" style={{ marginBottom: "15px" }} />
-            <h1 style={{ marginTop: "-20px" }}>Article Drafts</h1>
+            <h1 style={{ marginTop: "-20px" }}>{articleType === "draft" ? "Article Drafts" : "Published Articles"}</h1>
 
             <div style={gridContainerStyle}>
                 {articles.map((article, index) => (
@@ -90,7 +90,7 @@ function ArticleDrafts() {
                         onMouseOut={(e) =>
                             (e.currentTarget.style.transform = "scale(1)")
                         }
-                        onClick={() => navigate(`./${article?.id}`)}
+                        onClick={() => navigate(`${article?.id}`)}
                     >
                         <Typography variant="h6">
                         {article.title.length > 40 
@@ -109,17 +109,10 @@ function ArticleDrafts() {
                                 }}
                         />
                         <p style={{fontSize: "10px"}}>{formatDate(article?.created_at)}</p>
-                        <Button sx={{marginTop: "10px"}} >
-                            <CreateIcon sx={{color: "black"}} fontSize='medium'/>
-                        </Button>
                     </Card>
                 ))}
             </div>
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        {/* <Toolbar /> */}
-        <Outlet />
-        </Box>
         </div>
     );
 }
-export default ArticleDrafts;
+export default WritersArticles;

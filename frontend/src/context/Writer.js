@@ -9,7 +9,7 @@ export const WriterProvider = ({ children }) => {
   const [articleType, setArticleType] = useState(null);
   const { user } = useContext(UserContext); // Assuming user comes from UserContext
 
-console.log(articleType, "article type")
+
   useEffect(() => {
     const fetchArticles = async () => {
       const apiUrl = "http://127.0.0.1:8000/";

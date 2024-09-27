@@ -54,12 +54,36 @@ class ArticleParagraphSerializer(serializers.ModelSerializer):
             return request.build_absolute_uri(obj.photo.url)
         return None
     
+    
+    
+class UserSerializer(serializers.ModelSerializer):
+    profile = ProfileSerializer()
+    writer_request = WriterRequestSerializer(source='writerrequest_set', many=True, read_only=True)
+    
+    class Meta: 
+        model = User
+        fields = ["id", "username", "password", "email", "is_superuser", "profile", "writer_request"]
+        extra_kwargs = {
+            "password": {"write_only": True, "required": True}, # Make password required
+            "email": {"required": True},  # This line makes the email field required
+            "username": {"required": True},  # Make username required
+            "is_superuser": {"read_only": True},  # is_superuser is managed by admin
+            }
+        
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        # Create a profile for the new user
+        Profile.objects.create(user=user)
+        return user    
+    
+
 
 
 class ArticleSerializer(serializers.ModelSerializer):
     paragraphs = ArticleParagraphSerializer(many=True)
     photo_header = serializers.SerializerMethodField()  # Add this line for the photo_header URL
-
+    user = UserSerializer()  # This will nest the full user object with profile info
+    
 
     class Meta:
         model = Article
@@ -86,25 +110,7 @@ class ArticleSerializer(serializers.ModelSerializer):
     #     return article
 
 
-class UserSerializer(serializers.ModelSerializer):
-    profile = ProfileSerializer()
-    writer_request = WriterRequestSerializer(source='writerrequest_set', many=True, read_only=True)
-    
-    class Meta: 
-        model = User
-        fields = ["id", "username", "password", "email", "is_superuser", "profile", "writer_request"]
-        extra_kwargs = {
-            "password": {"write_only": True, "required": True}, # Make password required
-            "email": {"required": True},  # This line makes the email field required
-            "username": {"required": True},  # Make username required
-            "is_superuser": {"read_only": True},  # is_superuser is managed by admin
-            }
-        
-    def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
-        # Create a profile for the new user
-        Profile.objects.create(user=user)
-        return user
+
     
     
     

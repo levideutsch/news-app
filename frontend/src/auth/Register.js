@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { GlobalStylesContext } from '../context/GlobalStyles';
 
 
 // MUI IMPORTS
@@ -16,17 +17,40 @@ function Register({ loginClicked, setLoginClicked, setHasAnAccount, loginOrRegis
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('');
-
+    const { globalTextColor, globalButtonColor } = useContext(GlobalStylesContext)
 
     const handleSubmit = (e) => {
         e.preventDefault();
         // register(username, password);        
     };
 
+      const textFieldStyles = {
+        "& .MuiOutlinedInput-root": {
+          "& fieldset": {
+            borderColor: "white", // Default border color
+          },
+          "&:hover fieldset": {
+            borderColor: "white", // Border color when hovered
+          },
+          "&.Mui-focused fieldset": {
+            borderColor: "white", // Border color when focused
+          },
+          "& input": {
+            color: "white", // Text color
+          },
+        },
+        "& .MuiInputLabel-root": {
+          color: "white", // Label color
+        },
+        "& .MuiInputLabel-root.Mui-focused": {
+          color: "white", // Label color when focused
+      }
+    }
+
 
     return (
       <Dialog open={loginOrRegisterIsOpen}>
-        <Container maxWidth="xs">
+        <Container maxWidth="xs" sx={{backgroundColor: "#394853", color: globalTextColor}}>
         <Box
           display="flex"
           flexDirection="column"
@@ -34,7 +58,7 @@ function Register({ loginClicked, setLoginClicked, setHasAnAccount, loginOrRegis
           justifyContent="center"
           sx={{ mt: 8 }}
         >
-          <Typography variant="h4" component="h1" gutterBottom>
+          <Typography variant="h4" component="h1" gutterBottom >
             Register
           </Typography>
           <Box
@@ -43,6 +67,7 @@ function Register({ loginClicked, setLoginClicked, setHasAnAccount, loginOrRegis
             sx={{ mt: 1, width: "100%" }}
           >
             <TextField
+              sx={textFieldStyles}
               variant="outlined"
               margin="normal"
               required
@@ -56,6 +81,7 @@ function Register({ loginClicked, setLoginClicked, setHasAnAccount, loginOrRegis
               onChange={(e) => setUsername(e.target.value)}
             />
             <TextField
+              sx={textFieldStyles}
               variant="outlined"
               margin="normal"
               required
@@ -69,6 +95,7 @@ function Register({ loginClicked, setLoginClicked, setHasAnAccount, loginOrRegis
               onChange={(e) => setEmail(e.target.value)}
             />
             <TextField
+              sx={textFieldStyles}
               variant="outlined"
               margin="normal"
               required
@@ -87,6 +114,7 @@ function Register({ loginClicked, setLoginClicked, setHasAnAccount, loginOrRegis
               variant="contained"
               color="primary"
               sx={{ mt: 3, mb: 2 }}
+              style={globalButtonColor}
             >
               Let's Go!
             </Button>
@@ -94,10 +122,10 @@ function Register({ loginClicked, setLoginClicked, setHasAnAccount, loginOrRegis
           <Typography>Already have an account?</Typography>
         
         <Button onClick={() => setHasAnAccount(true)}>
-        <Typography>Login Here</Typography>
+        <Typography style={globalTextColor}>Login Here</Typography>
       </Button>
       <Button onClick={() => setLoginOrRegisterIsOpen(false)}>
-        <ArrowBackIosIcon />
+        <ArrowBackIosIcon style={globalTextColor} />
         </Button>
 {/*   
           <Typography variant="body2" color="error" sx={{ mt: 2 }}>

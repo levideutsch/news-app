@@ -1,7 +1,8 @@
 import React, { useState, useContext, useEffect } from "react";
 import { UserContext } from "../context/User";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN } from "../util/constants";
+
 // COMPONENT IMPORTS
 import EditMySingleArticle from "./EditMySingleArticle";
 
@@ -14,16 +15,18 @@ import InstagramIcon from '@mui/icons-material/Instagram';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import Avatar from "@mui/material/Avatar";
 import EditNoteIcon from '@mui/icons-material/EditNote';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { WriterContext } from "../context/Writer";
 
-function MySingleArticle() {
+function WritersSingleArticle() {
   const { isMobile, user } = useContext(UserContext);
-  const { articles, setArticleType } = useContext(WriterContext)
+  const [errorFetchingWritersSingleArticle, setErrorFetchingWritersSingleArticle] = useState(null)
   const [article, setArticle] = useState({})
   const [isEditing, setIsEditing] = useState(false)
-  const { articleId } = useParams()
-console.log(articleId)
-//   const article = articles.find(a => a.id === parseInt(articleId))
+  const { articleId, articleType } = useParams()
+  const navigate = useNavigate()
+
+
 
   const socialMediaLinks = [
     { icon: <XIcon />, link: user?.profile?.x_link },
@@ -79,7 +82,6 @@ console.log(articleId)
     // }, []);
 
     useEffect(() => {
-        console.log("sisngle called")
         const fetchArticle = async () => {
           const apiUrl = `http://127.0.0.1:8000/api/articles/${parseInt(articleId)}/`;
           const token = localStorage.getItem(ACCESS_TOKEN);
@@ -92,10 +94,11 @@ console.log(articleId)
               },
             });
             if (!response.ok) {
-              console.log(response);
+              setErrorFetchingWritersSingleArticle(true)
             } else {
               const data = await response.json();
               setArticle(data);
+              setErrorFetchingWritersSingleArticle(null)
             }
           } catch (error) {
             console.log("Failed to fetch articles");
@@ -108,8 +111,6 @@ console.log(articleId)
       }, []);
 
       
-
-
   if (!isEditing) {
     return (
         <div
@@ -119,9 +120,14 @@ console.log(articleId)
             margin: "0 auto", // Center the div horizontally in the available space
           }}
         >
+            <IconButton onClick={() => navigate(`/writer/articles/${articleType}`)}>
+              <ArrowBackIosIcon fontSize="medium" sx={{color: "black"}}/>
+            </IconButton>
             <IconButton onClick={() => setIsEditing(true)}>
                 <EditNoteIcon fontSize="large" sx={{color: "black"}}/>
             </IconButton>
+            {article?.is_a_draft ? "Draft" : "Published"}
+            
           <h1 style={{ textAlign: "left" }}>{article?.title}</h1>
     
           <div style={{ textAlign: "left", marginTop: "20px" }}>
@@ -191,4 +197,4 @@ console.log(articleId)
     return <EditMySingleArticle setIsEditing={setIsEditing} formatDate={formatDate} article={article} setArticle={setArticle} />
   }
 }
-export default MySingleArticle;
+export default WritersSingleArticle
