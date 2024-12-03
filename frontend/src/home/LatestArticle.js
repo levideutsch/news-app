@@ -13,7 +13,8 @@ function LatestArticle({ article }) {
         justifyContent: 'center',
         transition: 'transform 0.3s ease, box-shadow 0.3s ease',
         boxShadow: 20,
-        maxHeight: "48vh"
+        maxHeight: "40vh",
+        height: "40vh"
     };
 
     const imageStyle = {

@@ -72,8 +72,8 @@ function WritersArticles() {
 
     return (
         <div style={{ textAlign: "center" }}>
-            <DraftsIcon fontSize="large" style={{ marginBottom: "15px" }} />
-            <h1 style={{ marginTop: "-20px" }}>{articleType === "draft" ? "Article Drafts" : "Published Articles"}</h1>
+            <DraftsIcon fontSize="large" style={{ marginBottom: "15px", color: "#394853" }} />
+            <h1 style={{ marginTop: "-20px", color: "#394853" }}>{articleType === "draft" ? "Article Drafts" : "Published Articles"}</h1>
 
             <div style={gridContainerStyle}>
                 {articles.map((article, index) => (

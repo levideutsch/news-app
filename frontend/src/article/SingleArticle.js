@@ -5,7 +5,7 @@ import { useParams, useNavigate } from "react-router-dom"
 
 // MUI IMPORTS
 import Card from "@mui/material/Card";
-import { Typography, TextField, Button, Input, IconButton } from "@mui/material";
+import { Typography, TextField, Button, Input, IconButton, Chip } from "@mui/material";
 import XIcon from '@mui/icons-material/X';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import InstagramIcon from '@mui/icons-material/Instagram';
@@ -13,12 +13,14 @@ import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import Avatar from "@mui/material/Avatar";
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-
+import CommentIcon from '@mui/icons-material/Comment';
+import ArticleComments from "./comment/ArticleComments";
 
 function SingleArticle() {
-    const { isMobile, user } = useContext(UserContext);
+    const { isMobile, user, isAuthorized, setLoginOrRegisterIsOpen } = useContext(UserContext);
     const [errorFetchingArticle, setErrorFetchingArticle] = useState(null)
     const [article, setArticle] = useState({})
+    const [articleCommentsClicked, setArticleCommentsClicked] = useState(false)
     const { articleId } = useParams()
     const navigate = useNavigate()
 
@@ -71,17 +73,24 @@ function SingleArticle() {
     return date.toLocaleString('en-US', options);
     }
 
-    function formatLink(link) {
-        if (link && !link.startsWith('http://') && !link.startsWith('https://')) {
-            return `https://${link}`;
-        }
-        return link;
-    }
+      function formatLink(link) {
+          if (link && !link.startsWith('http://') && !link.startsWith('https://')) {
+              return `https://${link}`;
+          }
+          return link;
+      }
 
-console.log(article)
+      // funciton to navigagte to hope page and open selected tag
+      const navigateHomeAndSetCurrentTag = (selectedTag) => {
+        localStorage.setItem("selectedTag", selectedTag)
+        navigate("/")
+      }
+
+    
     {
         if (!errorFetchingArticle) {
             return (
+              <div>
                 <Card 
                 style={{
                     width: isMobile ? "100%" : "45%", // Adjust width based on mobile or desktop
@@ -150,8 +159,52 @@ console.log(article)
                             </div>
                         ))
                     }
+
+                    <div style={{marginTop: "20px", textAlign: "center"}}>
+                      <IconButton onClick={ isAuthorized ? () => setArticleCommentsClicked(true) : () =>  setLoginOrRegisterIsOpen(true)}>
+                          <Typography sx={{color: "black"}}>Comments</Typography>
+                      </IconButton>
+                    </div>
+                    <ArticleComments 
+                    articleCommentsClicked={articleCommentsClicked} 
+                    setArticleCommentsClicked={setArticleCommentsClicked}
+                    articleId={articleId}
+                    />
+
+                    <hr style={{ width: "100%", marginTop: "20px" }} />
+                      <div style={{ 
+                        display: "flex", 
+                        gap: "15px", 
+                        flexWrap: "wrap", 
+                        marginTop: "40px", 
+                        marginBottom: "40px", 
+                        border: "5px", 
+                        borderColor: "red" 
+                      }}>
+                        {article?.tags?.map((tag) => (
+                          <Chip 
+                            key={tag?.id} 
+                            label={tag?.name} 
+                            onClick={() => navigateHomeAndSetCurrentTag(tag?.id)}
+                            style={{ 
+                              borderRadius: "16px", 
+                              backgroundColor: "#e0e0e0", // You can adjust this color to your preference
+                              fontWeight: "bold", 
+                              cursor: "pointer", // Pointer cursor to indicate it's clickable
+                              transition: "all 0.3s ease", // Smooth transition for hover effect
+                            }} 
+                          />
+                        ))}
+                      </div>
+
                   </div>
              </Card>  
+              <div style={{textAlign: "center", marginBottom: "80px"}}>
+              <IconButton onClick={() => navigate("/")}>
+              <ArrowBackIosIcon sx={{color: "white"}} fontSize="large"/>
+             </IconButton>
+              </div>
+             </div>
             )
         } else {
             return <h1 style={{textAlign: "center", color: "white"}}>Unable To View Article</h1>

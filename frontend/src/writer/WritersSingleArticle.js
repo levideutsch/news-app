@@ -121,12 +121,14 @@ function WritersSingleArticle() {
           }}
         >
             <IconButton onClick={() => navigate(`/writer/articles/${articleType}`)}>
-              <ArrowBackIosIcon fontSize="medium" sx={{color: "black"}}/>
+              <ArrowBackIosIcon fontSize="medium" sx={{color: "#394853"}}/>
             </IconButton>
             <IconButton onClick={() => setIsEditing(true)}>
-                <EditNoteIcon fontSize="large" sx={{color: "black"}}/>
+                <EditNoteIcon fontSize="large" sx={{color: "#394853"}}/>
             </IconButton>
-            {article?.is_a_draft ? "Draft" : "Published"}
+            <a style={{color: "#394853"}}>{article?.is_a_draft ? "Draft" : "Published"}</a>
+           
+     
             
           <h1 style={{ textAlign: "left" }}>{article?.title}</h1>
     
@@ -173,9 +175,9 @@ function WritersSingleArticle() {
           <hr />
           <div style={{textAlign: "left"}}>
             {
-                article?.paragraphs?.map((paragraph) => (
-                    <div key={paragraph?.order}>
-                    <p key={paragraph?.order} style={{marginTop: "20px"}}>
+                article?.paragraphs?.map((paragraph, index) => (
+                    <div key={index}>
+                    <p style={{marginTop: "20px"}}>
                         {paragraph?.body}
                     </p>
                     <img 

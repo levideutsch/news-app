@@ -13,9 +13,9 @@ function Admin() {
   const { isMobile, allUsers } = useContext(UserContext);
   const [writerRequests, setWriterRequests] = useState([])
   const [selectedBox, setSelectedBox] = useState("default")
+  const [numberOfTags, setNumberOfTags] = useState(null)
+  const approvedWriters = writerRequests?.filter(request => request?.approved)
 
-  const approvedWriters = writerRequests.filter(request => request?.approved)
-  console.log(approvedWriters)
 
   const cardStyle = {
     width: "100%",
@@ -33,7 +33,7 @@ function Admin() {
   useEffect(() => {
     const fetchRequests = async () => {
         const apiUrl = "http://127.0.0.1:8000/";
-        const endpoint = "api/writer-requests/list/"
+        const endpoint = "api/admin-dash-data/"
         const token = localStorage.getItem(ACCESS_TOKEN);
 
         try {
@@ -48,7 +48,8 @@ function Admin() {
                 console.log(response)
             } else {
                 const data = await response.json()
-                setWriterRequests(data)
+                setWriterRequests(data?.writer_requests_list)
+                setNumberOfTags(data?.number_of_tags)
             }
         } catch (error) {
             console.log('Failed to fetch writer requests');
@@ -82,7 +83,7 @@ function Admin() {
                     <Typography variant="body2">
                     </Typography>
                     <Typography style={{fontSize: "70px"}}>
-                        {writerRequests.length}
+                        {writerRequests?.length}
                       </Typography>
                       <Button onClick={() => setSelectedBox("writerRequests")} style={{color: "white", backgroundColor: "#394853"}}>Go To Page</Button>
                   </Card>
@@ -92,7 +93,7 @@ function Admin() {
                   <Card style={cardStyle} onClick={() => setSelectedBox("approvedWriters")}>
                     <Typography variant="h6">Current Writers</Typography>
                     <Typography style={{fontSize: "70px"}}>
-                      {approvedWriters.length}
+                      {approvedWriters?.length}
                     </Typography>
                     <Button onClick={() => setSelectedBox("approvedWriters")} style={{color: "white", backgroundColor: "#394853"}}>Go To Page</Button>
                   </Card>
@@ -109,10 +110,11 @@ function Admin() {
         
                 <Grid item xs={17} sm={isMobile ? 12 : 4}>
                   <Card style={cardStyle}>
-                    <Typography variant="h6">Card 4</Typography>
-                    <Typography variant="body2">
-                      This is some fake text for card 4
+                    <Typography variant="h6">Tags</Typography>
+                    <Typography style={{fontSize: "70px"}}>
+                      {numberOfTags}
                     </Typography>
+                    <Button onClick={() => setSelectedBox("tags")} style={{color: "white", backgroundColor: "#394853"}}>Go To Page</Button>
                   </Card>
                 </Grid>
                 <Grid item xs={17} sm={isMobile ? 12 : 4}>

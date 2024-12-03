@@ -14,7 +14,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 
 function Navbar() {
-  const { isAuthorized, setIsAuthorized, setLoginOrRegisterIsOpen } =
+  const { isAuthorized, setIsAuthorized, setLoginOrRegisterIsOpen, isMobile, currentRoute } =
     useContext(UserContext);
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -53,6 +53,7 @@ function Navbar() {
             }
           </IconButton>
             }
+
           <Typography
             variant="h6"
             component="div"
@@ -62,6 +63,24 @@ function Navbar() {
             The Offendinator
           </Typography>
 
+
+            {
+              !isMobile &&
+              <div style={{ 
+                display: "flex",
+                justifyContent: "center",
+                position: "absolute",
+                width: "auto",  // Adjusts the width to content size
+                left: "50%",  // Centers horizontally in the parent
+                transform: "translateX(-50%)",  // Fine-tunes the centering
+               }}>
+              <h1 style={{ textAlign: "center" }}>
+                {currentRoute}
+              </h1>
+            </div>
+            }
+       
+
           {isAuthorized && (
             <Button
               style={{ color: "white" }}
@@ -70,7 +89,7 @@ function Navbar() {
               <AccountCircleIcon  style={{color: "black"}}/>
             </Button>
           )}
-
+       
           {!isAuthorized ? (
             <Button
               color="inherit"

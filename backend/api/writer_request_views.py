@@ -68,20 +68,3 @@ class AdminWriterRequestUpdateView(generics.UpdateAPIView):
         serializer.save()
     
     
-        # class ActiveWriterListView(APIView):
-        #     permission_classes = [AllowAny] 
-            
-        #     def get(self, request, *args, **kwargs):
-        #          writers = Profile.objects.filter(is_writer=True)
-        #                 # Create a custom list of dictionaries to return as JSON
-        #          writer_list = [
-        #             {
-        #                 "id": writer.id,
-        #                 "username": writer.user.username,
-        #                 "email": writer.user.email,  # example fields
-        #                 "profile_photo": request.build_absolute_uri(writer.profile_photo.url) if writer.profile_photo else None,
-        #                 # add other fields as needed
-        #             }
-        #             for writer in writers
-        #         ]
-        #          return JsonResponse(writer_list, safe=False)

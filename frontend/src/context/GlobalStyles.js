@@ -10,6 +10,10 @@ export const GlobalStylesProvider = ({ children }) => {
         color: "white", // Set global text color to white
     };
 
+    const globalTextColorBlack = {
+        color: "black"
+    }
+
     const globalButtonColor = {
         backgroundColor: "white",
         color: "black", // Set global text color to white
@@ -19,6 +23,7 @@ export const GlobalStylesProvider = ({ children }) => {
         <GlobalStylesContext.Provider value={{
             // styles
             globalTextColor,
+            globalTextColorBlack,
             globalButtonColor
               }}>
             {children}

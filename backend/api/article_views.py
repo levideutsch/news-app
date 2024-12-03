@@ -1,7 +1,7 @@
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework import serializers
-from .models import Article, ArticleParagraph
+from .models import Article, ArticleParagraph, Tag
 from .serializers import ArticleSerializer, ArticleParagraphSerializer
 from django.contrib.auth.models import User
 from rest_framework.response import Response
@@ -14,6 +14,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.utils.timezone import now, timedelta
 from .services.article_service import ArticleService
 # pdb.set_trace()
+from django.db.models import Count
 import json
 
 
@@ -71,6 +72,15 @@ class ArticleCreateView(APIView):
                 photo_header=article_data['photo_header'],
                 is_a_draft=article_data['is_a_draft']
             )
+            
+         # Add tags to article 
+            tags_str = request.data.get("tags", "")
+            tags = [int(tag) for tag in tags_str.split(",") if tag.isdigit()]  
+             
+            tag_objects = Tag.objects.filter(id__in=tags)
+            article.tags.add(*tag_objects)
+            article.save()
+            # pdb.set_trace()
 
             # Create paragraphs linked to the article
             for paragraph_data in article_data['paragraphs']:
@@ -258,12 +268,50 @@ class HomePageArticles(APIView):
     
     def get(self, request, *args, **kwargs):
         try:
-            articles = ArticleService.get_articles(request)
-            response_data = ArticleService.get_response_data(articles, request)
+            # Get all articles excluding drafts, ordered by created_at date
+            last_ten_articles = Article.objects.filter(
+                is_a_draft=False,
+            ).order_by("-published_date")
+
+            # Get the latest article
+            latest_article = last_ten_articles.first()
+
+            # Exclude the latest article from the rest of the response
+            articles_response = last_ten_articles.exclude(id=latest_article.id)[:10] if latest_article else last_ten_articles[:10]
+
+            # Serialize the articles
+            serializer = ArticleSerializer(articles_response, context={'request': request}, many=True)
             
-            return Response(response_data, status=200)
+            filtered_tags = Tag.objects.annotate(article_count=Count("articles")).filter(article_count__gt=0)
+            popular_tags = [{"id": tag.id, "name": tag.name} for tag in filtered_tags]
+
+            # Return the serialized articles along with the latest article and article count
+            return Response({
+                "past_day": serializer.data,  # Serialized data for past day articles
+                "latest": ArticleSerializer(latest_article, context={'request': request}).data if latest_article else None,  # Serialize the latest article if it exists
+                "number": articles_response.count(),  # Total number of articles excluding the latest
+                "popular_tags": popular_tags
+            }, status=status.HTTP_200_OK)
+
         except Article.DoesNotExist:
-            return Response({"error": "No articles found"}, status=404)
+            return Response({
+                "detail": "No articles found."
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as e:
+            # Catch any unexpected errors and return a generic error message
+            return Response({
+                "detail": f"An error occurred: {str(e)}"
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    # def get(self, request, *args, **kwargs):
+    #     try:
+    #         articles = ArticleService.get_articles(request)
+    #         response_data = ArticleService.get_response_data(articles, request)
+            
+    #         return Response(response_data, status=200)
+    #     except Article.DoesNotExist:
+    #         return Response({"error": "No articles found"}, status=404)
         
         
 class UserSingleArticleView(APIView):

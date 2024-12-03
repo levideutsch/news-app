@@ -19,6 +19,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import DraftsIcon from '@mui/icons-material/Drafts';
 import NewspaperIcon from "@mui/icons-material/Newspaper";
 import TaskIcon from '@mui/icons-material/Task';
+import NorthWestIcon from '@mui/icons-material/NorthWest';
+import { IconButton } from "@mui/material";
 
 
 // COMPONENT IMPORTS
@@ -122,6 +124,13 @@ export default function WriterDash() {
     
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         {/* <Toolbar /> */}
+        <IconButton sx={{marginTop: "-60px"}}>
+            <NorthWestIcon />
+          </IconButton>
+        <Typography variant="h5" sx={{textAlign: "center"}}>
+          Welcome To Writer Mode!
+        </Typography>
+
         <Outlet />
       </Box>
     </Box>

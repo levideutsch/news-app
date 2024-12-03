@@ -31,7 +31,7 @@ function PublicProfile() {
 
   function displayCard() {
     if (value === 0) {
-        return <SingleUserArticles currentPublicProfile={currentPublicProfile}/>
+        return <SingleUserArticles username={username}/>
     } else if (value === 1) {
         return <SingleUserAbout currentPublicProfile={currentPublicProfile} isMobile={isMobile}/>
     } else {
@@ -56,13 +56,11 @@ function PublicProfile() {
     const fetchRequests = async () => {
       const apiUrl = "http://127.0.0.1:8000/";
       const endpoint = `api/users/${username}/`;
-      const token = localStorage.getItem(ACCESS_TOKEN);
 
       try {
         const response = await fetch(`${apiUrl}${endpoint}`, {
           method: "GET",
           headers: {
-            // 'Authorization': `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         });
@@ -72,6 +70,7 @@ function PublicProfile() {
         } else {
           const data = await response.json();
           setCurrentPublicProfile(data);
+          console.log(data, "data")
           setErrorFetchingUser(false)
         }
       } catch (error) {
@@ -110,7 +109,6 @@ function PublicProfile() {
               value={value}
               onChange={handleChange}
               centered
-         
                 style={{
                     // marginTop: "-10px", // Adjust margin for better visibility
                     backgroundColor: "white",
@@ -121,8 +119,6 @@ function PublicProfile() {
                     // boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Add a shadow for better distinction
                     borderRadius: "8px",
                     marginTop: "20px"
-                    
-            
               }}
             >
                 {currentPublicProfile?.is_writer &&
@@ -131,31 +127,7 @@ function PublicProfile() {
               <Tab label="About" style={{color: "#394853"}}/>
               <Tab label="Connect" style={{color: "#394853"}}/>
             </Tabs>
-    
-             
           </Card>
-          {/* <Tabs
-              value={value}
-              onChange={handleChange}
-              centered
-              style={{
-                marginTop: "-35px",
-                backgroundColor: "white",
-                width: "95%",
-                // height: "20vh",
-                position: "relative", // Make sure Tabs has a relative position
-                zIndex: 1, // Set a higher z-index value
-                margin: "0 auto",
-                // boxShadow: 20,
-                borderRadius: "8px",
-              }}
-            >
-                {currentPublicProfile?.is_writer &&
-                <Tab label="Articles" style={{color: "#394853"}}/>
-                }
-              <Tab label="About" style={{color: "#394853"}}/>
-              <Tab label="Connect" style={{color: "#394853"}}/>
-            </Tabs> */}
             {displayCard()}
         </div>
       );

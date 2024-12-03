@@ -2,7 +2,8 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 // import api from '../auth/api'; // Import api
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../util/constants';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+
 import { jwtDecode } from 'jwt-decode';
 import useMediaQuery from "@mui/material/useMediaQuery";
 
@@ -16,9 +17,11 @@ export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null)
     const [allUsers, setAllUsers] = useState([])
     const isMobile = useMediaQuery("(max-width:600px)");
+    const [currentRoute, setCurrentRoute] = useState("")
+    const location = useLocation(); // Gets the current route
     const navigate= useNavigate()
 
-
+// console.log("login or register is open", loginOrRegisterIsOpen)
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -152,7 +155,7 @@ export const UserProvider = ({ children }) => {
         }
     }, [isAuthorized]); 
 
-    const login = async (username, password) => {
+    const login = async (email, password) => {
         const apiUrl = "http://127.0.0.1:8000"; // Base URL of the API
         const endpoint = '/api/token/'; // Endpoint for login
     
@@ -163,7 +166,7 @@ export const UserProvider = ({ children }) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username, password }),
+                body: JSON.stringify({ email, password }),
             });
     
             // Parse the response JSON once
@@ -173,7 +176,7 @@ export const UserProvider = ({ children }) => {
             if (!response.ok) {
                 // Use data object directly for error details
                 setLoginOrRegisterIsOpen(true)
-                setError(data.detail || 'Login failed');
+                setError(data.error);
                 setIsAuthorized(false);
                 return; // Exit the function early on error
             }
@@ -192,14 +195,14 @@ export const UserProvider = ({ children }) => {
         } catch (err) {
             // Handle any unexpected errors
             setIsAuthorized(false);
-            setError(err.message || 'Invalid login credentials.');
+            setError(err.message);
         }
     };
     
     
-    // const register = async (username, password) => {
+    // const register = async (email, username, password, password_confirmation) => {
     //     try {
-    //         await api.post('/api/user/register/', { username, password });
+    //         await api.post('/api/user/register/', {email, username, password, password_confirmation});
     //         setError(null);
 
     //         navigate('/');  // Redirect to login page after successful registration
@@ -210,12 +213,60 @@ export const UserProvider = ({ children }) => {
     // };
 
 
+    const register = async (email, username, password, password_confirmation) => {
+        const apiUrl = "http://127.0.0.1:8000/api/user/register/"; // Correct API endpoint for user registration
+      
+        try {
+          const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json", // Set the content type to JSON
+            },
+            body: JSON.stringify({
+              email: email,
+              username: username,
+              password: password,
+              password_confirmation: password_confirmation,
+            }), // Make sure the body is stringified
+          });
+      
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.detail || "Registration failed.");
+          }
+      
+          const data = await response.json();
+          console.log("User registered successfully:", data);
+          // Handle the success case, like showing a success message or redirecting
+      
+        } catch (error) {
+          console.error("Error during registration:", error);
+          // Handle error, such as displaying error message to the user
+        }
+      };
+
+
+
+      useEffect(() => {
+        if (location.pathname === "/") {
+            setCurrentRoute("Home")
+            console.log("setting home")
+        } else if (location.pathname === "/admin") {
+            setCurrentRoute("Admin")
+            console.log("setting other")
+        } else {
+            setCurrentRoute("")
+        }
+      }, [location])
+
+
     return (
         <UserContext.Provider value={{
             isMobile,
             loginOrRegisterIsOpen,
             setLoginOrRegisterIsOpen,
             login,
+            register,
             isAuthorized,
             setIsAuthorized,
             error,
@@ -224,6 +275,7 @@ export const UserProvider = ({ children }) => {
             setUser,
             allUsers,
             setAllUsers,
+            currentRoute
               }}>
             {children}
         </UserContext.Provider>

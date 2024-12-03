@@ -14,13 +14,14 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
 function Login({ setHasAnAccount, loginOrRegisterIsOpen, setLoginOrRegisterIsOpen,}) {
     const { login, error} = useContext(UserContext)
-    const [username, setUsername] = useState("");
+    // const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("")
     const [password, setPassword] = useState("");
 
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        login(username, password);     
+        login(email, password);     
       };
 
       const textFieldStyles = {
@@ -71,13 +72,13 @@ function Login({ setHasAnAccount, loginOrRegisterIsOpen, setLoginOrRegisterIsOpe
               margin="normal"
               required
               fullWidth
-              id="username"
-              label="Username"
-              name="username"
-              autoComplete="username"
+              id="email"
+              label="Email"
+              name="email"
+              autoComplete="email"
               autoFocus
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
             <TextField
               sx={textFieldStyles}
@@ -94,20 +95,26 @@ function Login({ setHasAnAccount, loginOrRegisterIsOpen, setLoginOrRegisterIsOpe
               onChange={(e) => setPassword(e.target.value)}
             />
             {
-              error && <Typography style={{color: "red"}}>{error}</Typography>
+              error && <Typography style={{color: "red", textAlign: "center"}}>{error}</Typography>
             }
+            { 
+              error === "Invalid password." && <Typography style={{color: "white", textAlign: "center"}}>
+                Reset Password?
+              </Typography>
+            }
+            <hr style={{width: "50%"}}/>
             <Button
               type="submit"
               fullWidth
               variant="contained"
               // color="primary"
-              sx={{ mt: 3, mb: 2, backgroundColor: "white", color: "black" }}
+              sx={{ mt: 10, mb: 2, backgroundColor: "white", color: "black" }}
             >
               Login
             </Button>
           </Box>
 
-          <Typography sx={{color: "white"}}>Do not have an account?</Typography>
+          <Typography sx={{color: "white", fontSize: "12px"}}>Do not have an account?</Typography>
         
           <Button onClick={() => setHasAnAccount(false)}>
           <Typography sx={{color: "white"}}>Register here</Typography>

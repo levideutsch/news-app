@@ -6,14 +6,18 @@ import os
 # env 
 from decouple import config
 
-EMAIL_BACKEND = config('EMAIL_BACKEND')
-EMAIL_HOST = config('EMAIL_HOST')
-EMAIL_PORT = config('EMAIL_PORT', cast=int)  # Ensure it's an integer
-EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)  # Ensure it's a boolean
-EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
-FRONTEND_URL = config('FRONTEND_URL')
+EMAIL_BACKEND=config("EMAIL_BACKEND")
+EMAIL_HOST=config("EMAIL_HOST")  
+EMAIL_PORT=config("EMAIL_PORT")
+EMAIL_USE_TLS=config("EMAIL_USE_TLS")
+EMAIL_HOST_USER=config("EMAIL_HOST_USER") 
+EMAIL_HOST_PASSWORD=config("EMAIL_HOST_PASSWORD")  
+DEFAULT_FROM_EMAIL=config("DEFAULT_FROM_EMAIL")  
+FRONTEND_URL=config("FRONTEND_URL")
+
+
+
+PASSWORD_RESET_TIMEOUT = 14400
 
 load_dotenv() # Loads env file for credetials for db 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -30,6 +34,7 @@ SECRET_KEY = 'django-insecure-tw0s&d7kw*pkwd!lb1*cx9#g@b--7^5e+3r(rq-!+4-bs#7xnx
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
+# CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://127.0.0.1']  # Adjust based on your testing setup
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
@@ -145,6 +150,6 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWS_CREDENTIALS = True
+CORS_ALLOW_CREDENTIALS = True
 
 

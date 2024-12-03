@@ -13,13 +13,15 @@ import EditIcon from '@mui/icons-material/Edit';
 // COMPONENT IMPORTS
 import EditProfile from "./EditProfile";
 import BecomeWriterRequest from "./BecomeWriterRequest";
+import ConfirmPasswordChangeRequest from "./ConfirmPasswordChangeRequest";
 
 function Profile() {
   const [isEditing, setIsEditing] = useState(false)  
   const { user, setUser, isMobile } = useContext(UserContext);
   const [becomeWriterClicked, setBecomeWriterClicked] = useState(false)
+  const [changePasswordClicked, setChangePasswordClicked] = useState(false)
 
-
+// console.log(user)
   
 
   const cardStyle = {
@@ -35,8 +37,6 @@ function Profile() {
   };
 
 
- 
-
   if (!isEditing) {
     return (
         <div style={{ textAlign: "center" }}>
@@ -46,6 +46,10 @@ function Profile() {
             setBecomeWriterClicked={setBecomeWriterClicked}
             writerRequest={user?.writer_request}
             />}
+            <ConfirmPasswordChangeRequest 
+              changePasswordClicked={changePasswordClicked}
+              setChangePasswordClicked={setChangePasswordClicked}
+            />
           <h1 style={{ textAlign: "center", color: "white", boxShadow: 20 }}>Profile</h1>
           <Avatar
             alt="Remy Sharp"
@@ -152,8 +156,16 @@ function Profile() {
             }
             </Typography>
           </Card>
+          <Card sx={{...cardStyle, cursor: "pointer" }} onClick={() => setChangePasswordClicked(true)}>
+            <Typography
+              variant={isMobile ? "h6" : "h5"}
+              style={{ marginBottom: "3px" }}
+            >
+              <span style={{ fontWeight: "bold" }}>Change Password</span>
+            </Typography>
+          </Card>
     
-          <IconButton style={{marginTop: "20px", boxShadow: 20}} onClick={() => setIsEditing(true)}>
+          <IconButton style={{marginTop: "20px", boxShadow: 20, marginBottom: "80px"}} onClick={() => setIsEditing(true)}>
             <EditIcon style={{color: "white"}} fontSize="large"/>
           </IconButton>
         </div>

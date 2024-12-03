@@ -10,8 +10,11 @@ import NewspaperIcon from "@mui/icons-material/Newspaper";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import PreviewAndPublish from "./PreviewAndPublish";
+import StyleIcon from '@mui/icons-material/Style';
 
+// COMPONENT IMPORTS
+import PreviewAndPublish from "./PreviewAndPublish";
+import AddTagsToArticle from "./AddTagsToArticle";
 
 
 function CreateArticle() {
@@ -21,11 +24,13 @@ function CreateArticle() {
     photo_header: null,
     is_a_draft: true,
     paragraphs: [{ body: "", photo: ""}],
+    tags: [],
   });
-
+// console.log(articleFormData, "tags from create")
   const [photoHeaderPreview, setPhotoHeaderPreview] = useState(null);
   const [paragraphPreviews, setParagraphPreviews] = useState({});
   const [previewAndPublishClicked, setPreviewAndPublishClicked] = useState(false)
+  const [addTagsClicked, setAddTagsClicked] = useState(false)
   const navigate = useNavigate()
 
 
@@ -163,6 +168,15 @@ function CreateArticle() {
         formData.append(`paragraphs[${index}].photo`, paragraph.photo);
       });
 
+      // Add tags to article formData
+      // articleData?.tags?.forEach((tag, index) => {
+      //   formData.append(`tags[${index}]`, tag)
+      // })
+      // articleData?.tags?.forEach((tag) => {
+      //   formData.append("tags", tag);
+      // });
+      formData.append("tags", articleFormData?.tags)
+
       const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -296,7 +310,7 @@ function CreateArticle() {
       </Card>
 
       <h1 style={{ fontWeight: "bold", marginTop: "100px" }}>Paragraphs</h1>
-      {articleFormData.paragraphs.map((paragraph, index) => (
+      {articleFormData?.paragraphs?.map((paragraph, index) => (
         <Card
           key={index}
           sx={{
@@ -371,7 +385,17 @@ function CreateArticle() {
         <AddIcon sx={{color: "black"}} fontSize="large"/>
         </Button>
       <br />
-      <div style={{justifyContent: "center", display: "flex", alignItems: "center", gap: "20px", marginBottom: "30px", marginTop: "30px"}}>
+      <Button onClick={() => setAddTagsClicked(true)}>
+        <StyleIcon sx={{color: "black"}}></StyleIcon>
+      </Button>
+      <AddTagsToArticle 
+        addTagsClicked={addTagsClicked}
+        setAddTagsClicked={setAddTagsClicked}
+        setArticleFormData={setArticleFormData}
+        articleFormData={articleFormData}
+        
+      />
+      <div style={{justifyContent: "center", display: "flex", alignItems: "center", gap: "20px", marginBottom: "80px", marginTop: "30px"}}>
         <Button
           sx={{color: "white", backgroundColor: "#394853", minWidth: "15vw"}}
           onClick={() => {
@@ -387,7 +411,6 @@ function CreateArticle() {
           Save as Draft
         </Button>
       </div>
-      <button onClick={() => navigate("/writer/articles/published")}>back to writer test</button>
     </div>
   );
 }

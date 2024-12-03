@@ -5,7 +5,7 @@ import Register from "./Register"
 
 function LoginOrRegister({ hasAnAccount, setHasAnAccount}) {
     const {loginOrRegisterIsOpen, setLoginOrRegisterIsOpen} = useContext(UserContext)
-console.log(hasAnAccount, "has an account")
+
     return (
         <div>
             {

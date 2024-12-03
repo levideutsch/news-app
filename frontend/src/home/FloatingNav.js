@@ -45,30 +45,31 @@ const FloatingNav = () => {
           zIndex: 1000, // Ensures it's on top of other elements
         }}
       >
-          <Tooltip title="Home" arrow >
+        <Tooltip title="Home" arrow>
           <IconButton 
-          sx={cardStyle} 
-          onClick={() => navigate("/")}
-          onMouseOver={(e) => e.currentTarget.style.transform = hoverStyle.transform}
-          onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+            sx={cardStyle} 
+            onClick={() => navigate("/")}
+            onMouseOver={(e) => e.currentTarget.style.transform = hoverStyle.transform}
+            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
           >
-          <Home fontSize='large'/>
-        </IconButton>
-          </Tooltip>
+            <Home fontSize="large" />
+          </IconButton>
+        </Tooltip>
          
-         {user?.profile?.is_writer &&
-              <Tooltip title="Create New Article" arrow>
-              <IconButton 
-                sx={cardStyle} 
-                onClick={() => navigate("/writer")}
-                onMouseOver={(e) => e.currentTarget.style.transform = hoverStyle.transform}
-                onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
-  
-              >
-              <CreateIcon fontSize='large'/>
-            </IconButton>`
-            </Tooltip>
-         }
+
+
+        {user?.profile?.is_writer && (
+          <Tooltip title="Create New Article" arrow>
+            <IconButton
+              sx={cardStyle}
+              onClick={() => navigate("/writer")}
+              onMouseOver={(e) => e.currentTarget.style.transform = hoverStyle.transform}
+              onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+            >
+              <CreateIcon fontSize="large" />
+            </IconButton>
+          </Tooltip>
+        )}
       </Paper>
     );
   };

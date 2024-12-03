@@ -100,7 +100,7 @@ function PreviewAndPublish({
         </div>
 
     <h1 style={{ fontWeight: "bold", marginTop: "80px" }}>Paragraphs</h1>
-      {articleFormData.paragraphs.map((paragraph, index) => (
+      {articleFormData?.paragraphs?.map((paragraph, index) => (
         <div
           key={index}
           style={{

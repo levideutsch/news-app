@@ -1,12 +1,18 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Profile, WriterRequest, Article, ArticleParagraph
+from .models import Profile, WriterRequest, Article, ArticleParagraph, Tag, Comment
+from .tokens import email_verification_token
+from django.core.mail import send_mail
+from django.conf import settings
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+
+
+# custom
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 
-
-    
-    
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
@@ -42,6 +48,11 @@ class WriterRequestSerializer(serializers.ModelSerializer):
 
 
 
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ['id', 'user', 'article', 'text', 'created_at', 'updated_at']
+
 class ArticleParagraphSerializer(serializers.ModelSerializer):
     photo = serializers.SerializerMethodField(allow_null=True)
     class Meta:
@@ -57,32 +68,60 @@ class ArticleParagraphSerializer(serializers.ModelSerializer):
     
     
 class UserSerializer(serializers.ModelSerializer):
-    profile = ProfileSerializer()
+    profile = ProfileSerializer(read_only=True)
     writer_request = WriterRequestSerializer(source='writerrequest_set', many=True, read_only=True)
-    
+    # password_confirmation = serializers.CharField(write_only=True, required=True)
+
     class Meta: 
         model = User
-        fields = ["id", "username", "password", "email", "is_superuser", "profile", "writer_request"]
+        fields = [
+            "id", "username", "password", "email",
+            "is_superuser", "profile", "writer_request"
+        ]
         extra_kwargs = {
-            "password": {"write_only": True, "required": True}, # Make password required
-            "email": {"required": True},  # This line makes the email field required
-            "username": {"required": True},  # Make username required
-            "is_superuser": {"read_only": True},  # is_superuser is managed by admin
-            }
-        
-    def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
-        # Create a profile for the new user
-        Profile.objects.create(user=user)
-        return user    
-    
+            # "password": {"write_only": True, "required": True},
+            # "email": {"required": True},
+            # "username": {"required": True},
+            "is_superuser": {"read_only": True},
+            "profile": {"required": False}
+        }
 
+    # def validate(self, data):
+    #     if data["password"] != data["password_confirmation"]:
+    #         raise serializers.ValidationError("Passwords do not match.")
+    #     return data
+
+    # def create(self, validated_data):
+    #     validated_data.pop('password_confirmation')
+
+    #     user = User(
+    #         username=validated_data["username"],
+    #         email=validated_data["email"],
+    #         is_active=False  # Inactive until email confirmation
+    #     )
+    #     user.set_password(validated_data["password"])
+    #     user.save()
+
+    #     # Create a profile for the new user
+    #     Profile.objects.create(user=user)
+
+        # Send confirmation email
+        # self.send_confirmation_email(user)
+
+        # return user
+
+ 
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ['id', 'name']
 
 
 class ArticleSerializer(serializers.ModelSerializer):
     paragraphs = ArticleParagraphSerializer(many=True)
     photo_header = serializers.SerializerMethodField()  # Add this line for the photo_header URL
     user = UserSerializer()  # This will nest the full user object with profile info
+    tags = TagSerializer(many=True)
     
 
     class Meta:
@@ -90,7 +129,7 @@ class ArticleSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'user', 'title', 'photo_header',
             'is_a_draft', 'created_at',
-            'updated_at', 'paragraphs'
+            'updated_at', 'paragraphs', "tags"
         ]
     
     def get_photo_header(self, obj):
@@ -108,6 +147,8 @@ class ArticleSerializer(serializers.ModelSerializer):
     #         ArticleParagraph.objects.create(article=article, **paragraph_data)
         
     #     return article
+    
+    
 
 
 

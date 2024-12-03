@@ -1,41 +1,17 @@
 import React, { useEffect, useState, useContext } from "react";
-import LatestArticle from "./LatestArticle";
 import { UserContext } from "../context/User";
 import { useNavigate } from "react-router-dom";
+
+// COMPONENT IMPORTS
+import LatestArticle from "./LatestArticle";
 
 // MUI IMPORTS
 import { Card } from "@mui/material";
 
-function TodaysArticles() {
-  const [todaysArticles, setTodaysArticles] = useState([]);
-  const [latestArticle, setLatestArticle] = useState(null);
+function TodaysArticles({ todaysArticles, latestArticle }) {
   const navigate = useNavigate()
   const { isMobile } = useContext(UserContext); // Accessing isMobile from UserContext
 
-  useEffect(() => {
-    const fetchArticles = async () => {
-      const apiUrl = "http://127.0.0.1:8000/";
-      const endpoint = "api/todays-articles";
-      try {
-        const response = await fetch(`${apiUrl}${endpoint}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setTodaysArticles(data?.past_day);
-          setLatestArticle(data?.latest);
-        } else {
-          console.error("Failed to fetch articles");
-        }
-      } catch (error) {
-        console.error("Failed to fetch articles", error);
-      }
-    };
-    fetchArticles();
-  }, []);
 
   // Inline styles based on screen size
   const containerStyle = {
@@ -90,6 +66,7 @@ function TodaysArticles() {
   return (
     <div style={containerStyle}>
       {/* Latest Article */}
+      
       <div style={latestArticleStyle}>
         <LatestArticle article={latestArticle} />
       </div>
@@ -143,6 +120,7 @@ function TodaysArticles() {
               (e.currentTarget.style.transform = hoverStyle.transform)
             }
             onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
+            onClick={() => navigate(`article/${article?.id}`)}
           >
             <div
               style={{

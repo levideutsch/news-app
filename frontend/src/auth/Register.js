@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import { UserContext } from '../context/User';
 import { GlobalStylesContext } from '../context/GlobalStyles';
 
 
@@ -17,11 +18,13 @@ function Register({ loginClicked, setLoginClicked, setHasAnAccount, loginOrRegis
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('');
+    const [passwordConfirmation, setPasswordConfirmation] = useState("")
     const { globalTextColor, globalButtonColor } = useContext(GlobalStylesContext)
+    const {register} = useContext(UserContext)
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // register(username, password);        
+        register(email, username, password, passwordConfirmation);        
     };
 
       const textFieldStyles = {
@@ -66,21 +69,7 @@ function Register({ loginClicked, setLoginClicked, setHasAnAccount, loginOrRegis
             onSubmit={handleSubmit}
             sx={{ mt: 1, width: "100%" }}
           >
-            <TextField
-              sx={textFieldStyles}
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="username"
-              label="Username"
-              name="username"
-              autoComplete="username"
-              autoFocus
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-            <TextField
+          <TextField
               sx={textFieldStyles}
               variant="outlined"
               margin="normal"
@@ -100,6 +89,21 @@ function Register({ loginClicked, setLoginClicked, setHasAnAccount, loginOrRegis
               margin="normal"
               required
               fullWidth
+              id="username"
+              label="Username"
+              type='text'
+              name="username"
+              autoComplete="username"
+              autoFocus
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <TextField
+              sx={textFieldStyles}
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
               name="password"
               label="Password"
               type="password"
@@ -107,6 +111,20 @@ function Register({ loginClicked, setLoginClicked, setHasAnAccount, loginOrRegis
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+            />
+            <TextField
+              sx={textFieldStyles}
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="passwordConfirmation"
+              label="Password Confirmation"
+              type="password"
+              id="passwordConfirmation"
+              autoComplete="current-password"
+              value={passwordConfirmation}
+              onChange={(e) => setPasswordConfirmation(e.target.value)}
             />
             <Button
               type="submit"
@@ -119,7 +137,7 @@ function Register({ loginClicked, setLoginClicked, setHasAnAccount, loginOrRegis
               Let's Go!
             </Button>
           </Box>
-          <Typography>Already have an account?</Typography>
+          <Typography sx={{color: "white", fontSize: "12px"}}>Already have an account?</Typography>
         
         <Button onClick={() => setHasAnAccount(true)}>
         <Typography style={globalTextColor}>Login Here</Typography>

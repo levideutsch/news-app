@@ -1,6 +1,8 @@
 import ApprovedWriters from "./writer-requests/ApprovedWriters"
 import WriterRequests from "./writer-requests/WriterRequests"
 import AllUsersList from "./users/AllUsersList"
+import CreateTag from "./admin-tags/TagsPage"
+import TagsPage from "./admin-tags/TagsPage"
 
 function AdminPages({
     setSelectedBox, selectedBox, writerRequests, setWriterRequests,
@@ -25,6 +27,11 @@ function AdminPages({
         } else if (selectedBox === "allUsers") {
             return <AllUsersList 
                     allUsers={allUsers}
+                    selectedBox={selectedBox}
+                    setSelectedBox={setSelectedBox}
+                    />
+        } else if (selectedBox === "tags") {
+            return <TagsPage 
                     selectedBox={selectedBox}
                     setSelectedBox={setSelectedBox}
                     />

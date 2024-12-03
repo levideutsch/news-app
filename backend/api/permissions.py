@@ -6,3 +6,4 @@ class IsWriter(BasePermission):
         if not request.user or not request.user.is_authenticated:
             return False
         return getattr(request.user.profile, 'is_writer', False)
+    

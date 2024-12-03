@@ -370,7 +370,7 @@ function EditProfile({ user, cardStyle, setIsEditing, isMobile, setUser}) {
       </form>
 
       <IconButton
-        style={{ marginTop: "20px", boxShadow: 20 }}
+        style={{ marginTop: "20px", boxShadow: 20, marginBottom: "80px" }}
         onClick={() => setIsEditing(false)}
       >
         <CloseIcon style={{ color: "white" }} fontSize="large" />

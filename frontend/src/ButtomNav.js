@@ -40,7 +40,7 @@ function ButtomNav({handleMenuToggle, drawerOpen, setDrawerOpen}) {
           <ListItem button onClick={null}>
             <ListItemText primary="New" />
           </ListItem>
-          <ListItem button onClick={null}>
+          <ListItem button onClick={() => handleNavigation("/profile")}>
             <ListItemText primary="Profile" />
           </ListItem>
           {/* Add more menu items as needed */}
